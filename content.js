@@ -1,23 +1,106 @@
-// 内容はこのファイルだけ書き換えればOK。【追記】【タイトル】の部分を埋めてください。
-(()=>{const P='【追記】',T='【タイトル】';
-const k=(tech,o={})=>({title:T,name:T,sum:P,tech,detail:[P,P,P],imgs:['',''],url:'',...o});
-const g=n=>k(n,{title:n,name:n});
-window.SITE={
-name:'EMI HASEGAWA',
-catch:'「やりたい」を形にするデジタルクリエイター',
-lead:'業務効率化からWebサイト、アプリ、動画編集まで、ITの力であなたのアイデアを具現化します。',
-profile:'顧客管理システムを販売するIT会社で、約5年間エンジニアとして働いてきました。現在はフリーランスとして、業務効率化・Web制作・アプリ制作に取り組んでいます。',
-strengths:[{t:'自走力',d:P},{t:'運用しやすい設計',d:P},{t:'代替案の提案',d:P}],
-skills:[['kintone','JavaScriptカスタマイズ、REST API連携、プラグイン開発'],['Excel VBA','業務ツールの自動化、大量データの処理'],['Power Automate','メール連携の自動化、エラー内容の出力'],['Google Apps Script','小規模な自動化'],['Looker / BigQuery','データの集計と可視化'],['Zendesk Guide','サポートサイトの制作'],['WordPress','子テーマでのカスタマイズ'],['BASE','ECサイトの構築'],['Photoshop / Illustrator / Premiere Pro / Figma / Canva','デザインのラフ作成、動画編集']],
-code:['HTML','CSS','JavaScript','Excel VBA','PHP','LookML','Google Apps Script'],
-ai:'開発には生成AIも活用し、効率よく進めています。出力内容の確認と動作検証は自分で行います。',
-works:[
-{g:'業務効率化',rm:1,c:[k('kintone'),k('Excel VBA'),k('Power Automate'),k('Google Apps Script'),k('Looker（LookML）、BigQuery')]},
-{g:'Web制作',rm:1,note:'WordPressなどのCMSやノーコードツールを使わず、コードでの制作も可能です。',c:[k('Zendesk Guide、HTML、CSS、JavaScript'),k('WordPress'),k(P),k('BASE')]},
-{g:'グラフィック & ムービー',rm:1,c:['Photoshop','Illustrator','Premiere Pro','Figma','Canva'].map(g)},
-{g:'個人制作',c:[k(P,{title:'【単語帳アプリ名】',name:'【単語帳アプリ名】'}),k(P,{title:'【国旗アプリ名】',name:'【国旗アプリ名】'}),k(P,{title:'【日記アプリ名】',name:'【日記アプリ名】'}),k('HTML、CSS、JavaScript')]}
-],
-// url に実際のURLを入れると、ポップアップの名前の隣にリンクアイコンが出ます。
-form:{action:'',e:{name:'',email:'',type:'',msg:''},types:['業務効率化','Web制作','アプリ制作','その他']},
-// 【追記】reCAPTCHAなどの迷惑メール対策、Googleフォームの作成と通知設定
-privacy:'いただいた内容は、お問い合わせへの返信のためにのみ利用します。【追記：文面を確認】'};})();
+// サイトの表示内容。文言の変更はこのファイルだけでいい。
+// 【追記】【タイトル】は未記入の箇所。
+(() => {
+  const TBD = '【追記】';
+  const TBD_TITLE = '【タイトル】';
+
+  // 実績カード1枚分
+  const work = (tech, overrides = {}) => ({
+    title: TBD_TITLE,
+    name: TBD_TITLE, // ポップアップ側の表示名
+    summary: TBD,
+    tech,
+    details: [TBD, TBD, TBD], // 課題 / やったこと / 工夫
+    images: ['', ''], // 空なら Coming soon
+    url: '', // 入れると名前の横にリンクアイコンが出る
+    ...overrides,
+  });
+
+  const toolWork = (tool) => work(tool, { title: tool, name: tool });
+
+  window.SITE = {
+    // TOP
+    name: 'EMI HASEGAWA',
+    catch: '「やりたい」を形にするデジタルクリエイター',
+    lead: '業務効率化からWebサイト、アプリ、動画編集まで、ITの力であなたのアイデアを具現化します。',
+
+    // PROFILE
+    // 1要素 = 1行
+    profile: [
+      '顧客管理システムを販売するIT会社で、インターン期間も含め約5年間エンジニアとして働いてきました。',
+      '前任者のいない環境で技術担当を一人で務め、業務の自動化からサイトの制作まで、立ち上げから運用まで担当し、エンジニアではない方でも日々の業務で使い続けられる仕組みをつくってきました。',
+      '現在はフリーランスとして、業務効率化・Web制作・アプリ制作に取り組んでいます。',
+    ],
+
+    // WORKS（isReproduction: 画像に「再現イメージ」を付ける）
+    works: [
+      {
+        title: '業務効率化',
+        isReproduction: true,
+        cards: [
+          work('kintone'),
+          work('Excel VBA'),
+          work('Power Automate'),
+          work('Google Apps Script'),
+          work('Looker（LookML）、BigQuery'),
+        ],
+      },
+      {
+        title: 'Web制作',
+        isReproduction: true,
+        note: 'WordPressなどのCMSやノーコードツールを使わず、コードでの制作も可能です。',
+        cards: [
+          work('Zendesk Guide、HTML、CSS、JavaScript'),
+          work('WordPress'),
+          work(TBD),
+          work('BASE'),
+        ],
+      },
+      {
+        title: 'グラフィック & ムービー',
+        isReproduction: true,
+        cards: ['Photoshop', 'Illustrator', 'Premiere Pro', 'Figma', 'Canva'].map(toolWork),
+      },
+      {
+        title: '個人制作',
+        cards: [
+          work(TBD, { title: '【単語帳アプリ名】', name: '【単語帳アプリ名】' }),
+          work(TBD, { title: '【国旗アプリ名】', name: '【国旗アプリ名】' }),
+          work(TBD, { title: '【日記アプリ名】', name: '【日記アプリ名】' }),
+          work('HTML、CSS、JavaScript'),
+        ],
+      },
+    ],
+
+    // STRENGTH
+    strengths: [
+      { title: '自走力', description: TBD },
+      { title: '運用しやすい設計', description: TBD },
+      { title: '代替案の提案', description: TBD },
+    ],
+
+    // SKILL
+    skills: [
+      { name: 'kintone', description: 'JavaScriptカスタマイズ、REST API連携、プラグイン開発' },
+      { name: 'Excel VBA', description: '業務ツールの自動化、大量データの処理' },
+      { name: 'Power Automate', description: 'メール連携の自動化、エラー内容の出力' },
+      { name: 'Google Apps Script', description: '小規模な自動化' },
+      { name: 'Looker / BigQuery', description: 'データの集計と可視化' },
+      { name: 'Zendesk Guide', description: 'サポートサイトの制作' },
+      { name: 'WordPress', description: '子テーマでのカスタマイズ' },
+      { name: 'BASE', description: 'ECサイトの構築' },
+      { name: 'Photoshop / Illustrator / Premiere Pro / Figma / Canva', description: 'デザインのラフ作成、動画編集' },
+    ],
+    languages: ['HTML', 'CSS', 'JavaScript', 'Excel VBA', 'PHP', 'LookML', 'Google Apps Script'],
+    aiNote: '開発には生成AIも活用し、効率よく進めています。出力内容の確認と動作検証は自分で行います。',
+
+    // CONTACT
+    // TODO: reCAPTCHA等の迷惑メール対策、Googleフォーム作成と通知設定
+    form: {
+      action: '', // GoogleフォームのformResponse URL
+      entries: { name: '', email: '', type: '', message: '' }, // 各項目のentry ID（entry.xxxxxxxx）
+      types: ['業務効率化', 'Web制作', 'アプリ制作', 'その他'],
+    },
+    privacy: 'いただいた内容は、お問い合わせへの返信のためにのみ利用します。【追記：文面を確認】',
+  };
+})();
