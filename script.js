@@ -57,7 +57,7 @@
       <h1 class="hero-name reveal">${escapeHtml(SITE.name)}</h1>
     </div>
     <div class="hero-text">
-      <p class="hero-catch reveal">${escapeHtml(SITE.catch)}</p>
+      <p class="hero-catch reveal">${SITE.catch.map((part) => `<span>${escapeHtml(part)}</span>`).join('')}</p>
       <p class="hero-lead reveal">${escapeHtml(SITE.lead)}</p>
     </div>`,
     true
@@ -104,7 +104,7 @@
     )
     .join('');
 
-  addSection('STRENGTH', `<div class="strength-grid">${strengthsHtml}</div>`);
+  addSection('STRENGTH', `<div class="strength-list">${strengthsHtml}</div>`);
 
   // SKILL
   const skillsHtml = SITE.skills
