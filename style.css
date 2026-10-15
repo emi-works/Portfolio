@@ -1,6 +1,7 @@
 :root {
   --color-bg: #F6F4F0;
   --color-accent: #FF6B00;
+  --color-accent-text: #C24E00; /* 文字用（背景とのコントラスト確保） */
   --color-text: #1A202C;
   --color-subtext: #4A5568;
   --color-line: #E0E0E0;
@@ -39,6 +40,7 @@ body {
   font: 400 16px/1.9 var(--font-sans);
   font-feature-settings: "palt";
   letter-spacing: .04em;
+  word-break: auto-phrase; /* 日本語を文節で改行（継承で全要素に効く） */
 }
 
 button {
@@ -102,7 +104,7 @@ a {
 
 /* 短いときは上下中央 */
 .section-inner {
-  margin: auto 0;
+  margin: 0;
 }
 
 /* --i は script.js で付与 */
@@ -123,7 +125,7 @@ a {
 #section-label {
   position: fixed;
   top: max(28px, env(safe-area-inset-top));
-  left: 4vw;
+  left: var(--pad-left);
   width: 60vw;
   height: 1.7em;
   overflow: hidden;
@@ -301,6 +303,10 @@ a {
   line-height: 2.2;
 }
 
+.profile-text p + p {
+  margin-top: .9em;
+}
+
 /* ---- WORKS ---- */
 
 .works-grid {
@@ -369,10 +375,6 @@ a {
 /* ---- STRENGTH ---- */
 
 /* 上から並べる */
-.section-strength .section-inner {
-  margin: 0;
-}
-
 .strength-list {
   max-width: 880px;
 }
@@ -381,6 +383,7 @@ a {
 .strength-list > div {
   display: grid;
   grid-template-columns: 12em 1fr;
+  align-items: baseline;
   padding: 28px 0;
   border-top: 1px solid var(--color-border);
 }
@@ -463,7 +466,7 @@ textarea {
 .submit-button {
   padding: 12px;
   border: 1px solid var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   font-weight: 500;
   transition: background .3s, color .3s;
 }

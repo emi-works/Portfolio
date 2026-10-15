@@ -89,7 +89,7 @@
       { name: 'Zendesk Guide', description: 'サポートサイトの制作' },
       { name: 'WordPress', description: '子テーマでのカスタマイズ' },
       { name: 'BASE', description: 'ECサイトの構築' },
-      { name: 'Photoshop / Illustrator / Premiere Pro / Figma / Canva', description: 'デザインのラフ作成、動画編集' },
+      { name: 'Photoshop / Illustrator / Premiere Pro / Figma / Canva', description: 'デザインデータへの落とし込み、動画編集' },
     ],
     languages: ['HTML', 'CSS', 'JavaScript', 'Excel VBA', 'PHP', 'LookML', 'Google Apps Script'],
     aiNote: '開発には生成AIも活用し、効率よく進めています。出力内容の確認と動作検証は自分で行います。',
