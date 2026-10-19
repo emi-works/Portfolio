@@ -106,7 +106,7 @@
       (item) => `
       <div class="reveal">
         <h3 class="heading">${escapeHtml(item.title)}</h3>
-        <p>${escapeHtml(item.description)}</p>
+        <p>${item.description.map(escapeHtml).join('<br>')}</p>
       </div>`
     )
     .join('');
