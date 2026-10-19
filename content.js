@@ -9,6 +9,7 @@
     title: TBD_TITLE,
     name: TBD_TITLE, // ポップアップ側の表示名
     summary: TBD,
+    result: '', // 成果（任意。空なら表示しない）
     tech,
     details: [TBD, TBD, TBD], // 課題 / やったこと / 工夫
     images: ['', ''], // 空なら Coming soon
@@ -38,7 +39,7 @@
         title: '業務効率化',
         isReproduction: true,
         cards: [
-          work('kintone'),
+          work('kintone', { result: '月20時間の集計作業を2時間に短縮（仮）' }),
           work('Excel VBA'),
           work('Power Automate'),
           work('Google Apps Script'),
@@ -95,12 +96,27 @@
     aiNote: '開発には生成AIも活用し、効率よく進めています。出力内容の確認と動作検証は自分で行います。',
 
     // CONTACT
-    // TODO: reCAPTCHA等の迷惑メール対策、Googleフォーム作成と通知設定
+    // 迷惑メール対策（ハニーポット等）は未導入。届くようになったら検討
     form: {
-      action: '', // GoogleフォームのformResponse URL
-      entries: { name: '', email: '', type: '', message: '' }, // 各項目のentry ID（entry.xxxxxxxx）
+      action: 'https://docs.google.com/forms/d/e/1FAIpQLSdCCNX03l9aJMuiQIJj82sk-LhdS3MJzxuRopSt2XrEL5wtwg/formResponse',
+      entries: {
+        name: 'entry.1205416184',
+        email: 'entry.196144356',
+        type: 'entry.1328257245',
+        message: 'entry.959593394',
+      },
+      // Googleフォームの選択肢と1文字でも違うと送信できない
       types: ['業務効率化', 'Web制作', 'アプリ制作', 'その他'],
+      // 送信後のポップアップ
+      thanks: {
+        title: 'お問い合わせありがとうございます',
+        message: '内容を確認のうえ、ご入力いただいたメールアドレス宛にご連絡いたします。',
+      },
     },
-    privacy: 'いただいた内容は、お問い合わせへの返信のためにのみ利用します。【追記：文面を確認】',
+    privacy: [
+      'ご入力いただいた個人情報は、お問い合わせへの対応およびご連絡の目的にのみ利用いたします。',
+      '法令に基づく場合を除き、第三者に開示・提供することはありません。',
+      '本サイトではアクセス解析のためGoogleアナリティクスを使用しています。',
+    ],
   };
 })();

@@ -10,6 +10,49 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans:wght@400;700&display=swap">
   <link rel="stylesheet" href="style.css">
+
+  <!-- Google tag (gtag.js) -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+
+    (() => {
+      const GA_MEASUREMENT_ID = 'G-TT0E333CEB';
+      const EXCLUDE_KEY = 'ga-exclude';
+
+      // ?exclude=1 で自分のブラウザを計測から除外、?exclude=0 で解除
+      const params = new URLSearchParams(location.search);
+      const excludeParam = params.get('exclude');
+      let isExcluded = false;
+      try {
+        if (excludeParam === '1') localStorage.setItem(EXCLUDE_KEY, '1');
+        if (excludeParam === '0') localStorage.removeItem(EXCLUDE_KEY);
+        isExcluded = localStorage.getItem(EXCLUDE_KEY) === '1';
+      } catch (e) {
+        // localStorage が使えない環境（プライベートブラウズ等）では除外しない
+      }
+
+      // URL を共有しても除外が広がらないよう、パラメータを消す（config より前に）
+      if (excludeParam === '1' || excludeParam === '0') {
+        params.delete('exclude');
+        const query = params.toString();
+        history.replaceState(null, '', location.pathname + (query ? `?${query}` : '') + location.hash);
+      }
+
+      if (isExcluded) {
+        window[`ga-disable-${GA_MEASUREMENT_ID}`] = true;
+        console.log('GA: 計測除外中');
+      }
+
+      const tag = document.createElement('script');
+      tag.async = true;
+      tag.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+      document.head.appendChild(tag);
+
+      gtag('js', new Date());
+      gtag('config', GA_MEASUREMENT_ID);
+    })();
+  </script>
 </head>
 <body>
   <div id="section-label"></div>

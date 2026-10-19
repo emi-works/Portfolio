@@ -7,6 +7,8 @@
   --color-line: #E0E0E0;
   --color-placeholder: #E6E6E6;
   --color-border: #CFCFCF;
+  --color-muted: #9AA0A6; /* 入力欄の薄い文字 */
+  --color-error: #C5221F;
 
   --font-serif: 'DM Serif Display', serif;
   --font-sans: 'Noto Sans JP', 'Noto Sans', sans-serif;
@@ -206,7 +208,7 @@ a {
   white-space: nowrap;
   font: 400 18px var(--font-serif);
   letter-spacing: 0;
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   opacity: 0;
   transition: opacity .4s;
   pointer-events: none;
@@ -255,6 +257,71 @@ a {
 }
 
 /* ---- TOP ---- */
+
+/* 下余白の中に収め、縦線は画面の下端まで */
+.scroll-hint {
+  --line-h: clamp(12px, calc(var(--pad-bottom) - 56px), 48px); /* 低い画面でも下余白からはみ出さない長さ */
+  position: absolute;
+  left: var(--pad-left);
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.scroll-hint span {
+  writing-mode: vertical-rl;
+  font: 400 13px/1 var(--font-serif);
+  letter-spacing: .1em;
+  color: var(--color-subtext);
+}
+
+/* 薄い線 */
+.scroll-hint::after {
+  content: "";
+  width: 1px;
+  height: var(--line-h);
+  background: var(--color-subtext);
+  opacity: .3;
+}
+
+/* 薄い線の上端から下端へ流れる短い線（長さは線の1/3） */
+.scroll-hint::before {
+  content: "";
+  position: absolute;
+  left: calc(50% - .5px);
+  bottom: calc(var(--line-h) * 2 / 3);
+  z-index: 1; /* 薄い線（::after）より手前に */
+  width: 1px;
+  height: calc(var(--line-h) / 3);
+  background: var(--color-text); /* 薄い線と同じ色だと流れが見えない */
+  animation: scroll-hint-flow 2.2s ease-in-out infinite;
+}
+
+@keyframes scroll-hint-flow {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  30%,
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(calc(var(--line-h) * 2 / 3));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint::before {
+    animation: none;
+    opacity: 0;
+  }
+}
 
 .hero-name-wrap {
   position: absolute;
@@ -323,8 +390,10 @@ a {
   margin: -40px 0 64px;
 }
 
+/* button は中身を縦中央に置くので、行の高さに伸ばさず上詰めにする */
 .card {
   display: block;
+  align-self: start;
   text-align: left;
 }
 
@@ -333,6 +402,14 @@ a {
   margin-top: 10px;
   font-size: 14px;
   line-height: 1.6;
+}
+
+.card-result {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-subtext);
 }
 
 /* カードとモーダルで共通 */
@@ -401,10 +478,15 @@ a {
 
 /* ---- SKILL ---- */
 
+/* 右列の左端を基準線に揃える */
 .skill-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px 4vw;
+  grid-template-columns: calc(var(--axis) - var(--pad-left)) 1fr;
+  gap: 18px 0;
+}
+
+.skill-list > div:nth-child(odd) {
+  padding-right: 2em;
 }
 
 .skill-list b {
@@ -435,8 +517,26 @@ a {
 
 form {
   display: grid;
-  gap: 14px;
+  gap: 20px;
   max-width: 560px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.required {
+  margin-left: .8em;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--color-accent-text);
 }
 
 input,
@@ -451,6 +551,11 @@ textarea {
   border-radius: 0;
 }
 
+::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+
 select {
   appearance: none;
   padding-right: 40px;
@@ -458,9 +563,78 @@ select {
   cursor: pointer;
 }
 
+/* 未選択（「選択してください」）のときは薄く */
+select:invalid {
+  color: var(--color-muted);
+}
+
+select option {
+  color: var(--color-text);
+}
+
+/* 開いたときのリスト。対応ブラウザ（Chrome / Edge 135〜）のみ、それ以外は標準のまま */
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+
+  /* 矢印は背景のSVGを使う */
+  select::picker-icon {
+    display: none;
+  }
+
+  ::picker(select) {
+    width: anchor-size(width);
+    margin-top: 4px;
+    padding: 6px 0;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(26, 32, 44, .08);
+  }
+
+  select option {
+    padding: 10px 14px;
+  }
+
+  select option::checkmark {
+    display: none;
+  }
+
+  select option:hover,
+  select option:focus-visible {
+    background: var(--color-bg);
+    outline: 0;
+  }
+
+  select option:checked {
+    color: var(--color-accent-text);
+    font-weight: 500;
+  }
+
+  /* 「選択してください」はリストに出さない */
+  select option[value=""] {
+    display: none;
+  }
+}
+
 textarea {
   min-height: 130px;
   resize: vertical;
+}
+
+/* 吹き出しの代わりに欄の下に出すエラー */
+.field-error {
+  font-size: 13px;
+  color: var(--color-error);
+}
+
+.field-error:empty {
+  display: none;
+}
+
+[aria-invalid="true"] {
+  border-color: var(--color-error);
 }
 
 .submit-button {
@@ -474,6 +648,32 @@ textarea {
 .submit-button:hover {
   background: var(--color-accent);
   color: #fff;
+}
+
+.submit-button:disabled {
+  opacity: .5;
+  pointer-events: none;
+}
+
+/* 送信完了のポップアップ */
+.modal-box.modal-thanks {
+  width: min(480px, 100%);
+  padding: 48px 32px 36px;
+  text-align: center;
+}
+
+.modal-thanks h3 {
+  justify-content: center;
+}
+
+.modal-thanks p {
+  margin-top: 16px;
+  color: var(--color-subtext);
+}
+
+.thanks-close {
+  min-width: 160px;
+  margin-top: 32px;
 }
 
 /* ---- modal ---- */
@@ -609,6 +809,14 @@ textarea {
 
   .nav-label {
     display: none;
+  }
+
+  .scroll-hint {
+    display: none;
+  }
+
+  .skill-list > div:nth-child(odd) {
+    padding-right: 0;
   }
 
   /* 縦に積む */
