@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- チラシのデザイン：A4の紙に見出し・写真・本文のレイアウト -->
+  <rect width="400" height="300" fill="#ECE9E3"/>
+  <rect x="140" y="65" width="120" height="170" rx="2" fill="none" stroke="#1A202C" stroke-width="2" opacity=".3" transform="rotate(7 200 150)"/>
+  <rect x="140" y="65" width="120" height="170" rx="2" fill="#fff" stroke="#1A202C" stroke-width="2.5"/>
+  <rect x="154" y="79" width="92" height="14" fill="#FF6B00"/>
+  <path d="M154 104 H218" stroke="#1A202C" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="154" y="114" width="92" height="56" fill="#DCD7CF"/>
+  <path d="M154 170 L180 144 L196 158 L214 138 L246 170" fill="none" stroke="#1A202C" stroke-width="2.5" stroke-linejoin="round"/>
+  <g stroke="#4A5568" stroke-width="2.5" stroke-linecap="round">
+    <path d="M154 186 H246"/>
+    <path d="M154 198 H246"/>
+    <path d="M154 210 H214"/>
+  </g>
+  <circle cx="232" cy="219" r="7" fill="none" stroke="#FF6B00" stroke-width="2.5"/>
+</svg>

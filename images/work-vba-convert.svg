@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- データ移行ツール：形式の違う表を、ボタン1つで整った表に変換 -->
+  <rect width="400" height="300" fill="#ECE9E3"/>
+  <!-- 変換前（バラバラな表） -->
+  <rect x="72" y="92" width="92" height="116" rx="3" fill="#fff" stroke="#1A202C" stroke-width="2.5"/>
+  <g stroke="#DCD7CF" stroke-width="2" stroke-linecap="round">
+    <path d="M72 112 H164"/>
+    <path d="M72 133 H130"/>
+    <path d="M100 152 H164"/>
+    <path d="M72 171 H140"/>
+    <path d="M110 190 H164"/>
+    <path d="M96 92 V140"/>
+    <path d="M132 120 V208"/>
+    <path d="M150 92 V160"/>
+  </g>
+  <g stroke="#4A5568" stroke-width="2.5" stroke-linecap="round">
+    <path d="M80 102 H90"/>
+    <path d="M104 124 H122"/>
+    <path d="M140 143 H156"/>
+    <path d="M80 162 H96"/>
+    <path d="M116 181 H126"/>
+    <path d="M140 199 H158"/>
+  </g>
+  <!-- 変換（ボタン） -->
+  <path d="M176 150 H218 M218 150 l-9 -8 M218 150 l-9 8" fill="none" stroke="#FF6B00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="180" y="166" width="34" height="20" rx="3" fill="#1A202C"/>
+  <path d="M193 171 V181 L202 176 Z" fill="#fff"/>
+  <!-- 変換後（7列の表） -->
+  <rect x="230" y="92" width="98" height="116" rx="3" fill="#fff" stroke="#1A202C" stroke-width="2.5"/>
+  <rect x="231.5" y="93.5" width="95" height="17" fill="#DCD7CF"/>
+  <g stroke="#DCD7CF" stroke-width="2">
+    <path d="M230 130 H328"/>
+    <path d="M230 149 H328"/>
+    <path d="M230 168 H328"/>
+    <path d="M230 187 H328"/>
+    <path d="M244 92 V208"/>
+    <path d="M258 92 V208"/>
+    <path d="M272 92 V208"/>
+    <path d="M286 92 V208"/>
+    <path d="M300 92 V208"/>
+    <path d="M314 92 V208"/>
+  </g>
+  <path d="M230 111 H328" stroke="#1A202C" stroke-width="2"/>
+</svg>

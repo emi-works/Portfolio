@@ -27,7 +27,7 @@
   const thumbImage = (url) =>
     url ? `<span class="thumb-image" style="background-image:url('${escapeHtml(url)}')"></span>` : 'Coming soon';
 
-  const reproductionBadge = (show) => (show ? '<em class="reproduction-badge">再現イメージ</em>' : '');
+  const imageBadge = (show) => (show ? '<em class="image-badge">イメージ</em>' : '');
 
   // GA4 のイベント送信（gtag は index.html で定義。無い環境では何もしない）
   const track = (eventName, params = {}) => {
@@ -79,10 +79,14 @@
       const cardsHtml = group.cards
         .map((card) => {
           const index = workCards.length;
-          workCards.push({ ...card, isReproduction: Boolean(group.isReproduction) });
+          workCards.push({
+            ...card,
+            isIllustration: Boolean(group.isIllustration),
+            detailLabels: card.detailLabels || group.detailLabels || DETAIL_LABELS,
+          });
           return `
           <button class="card reveal" data-index="${index}">
-            <span class="thumb">${thumbImage(card.images[0])}${reproductionBadge(group.isReproduction)}</span>
+            <span class="thumb">${thumbImage(card.images[0])}${imageBadge(group.isIllustration)}</span>
             <span class="card-title">${escapeHtml(card.title)}</span>
             ${card.result ? `<span class="card-result">${escapeHtml(card.result)}</span>` : ''}
           </button>`;
@@ -98,7 +102,11 @@
     })
     .join('');
 
-  addSection('WORKS', worksHtml);
+  // 一番上に、実物ではなくイラストである旨の注意書き
+  const worksNoticeHtml = SITE.worksNotice
+    ? `<p class="works-notice reveal">${escapeHtml(SITE.worksNotice)}</p>`
+    : '';
+  addSection('WORKS', worksNoticeHtml + worksHtml);
 
   // STRENGTH
   const strengthsHtml = SITE.strengths
@@ -106,7 +114,7 @@
       (item) => `
       <div class="reveal">
         <h3 class="heading">${escapeHtml(item.title)}</h3>
-        <p>${escapeHtml(item.description)}</p>
+        <p>${item.description.map(escapeHtml).join('<br>')}</p>
       </div>`
     )
     .join('');
@@ -129,7 +137,15 @@
     `
     <div class="skill-list">${skillsHtml}</div>
     <h3 class="heading code-heading reveal">書けるコード</h3>
-    <p class="code-list reveal">${SITE.languages.map(escapeHtml).join('　／　')}</p>
+    ${SITE.languages
+      .map(
+        (group) => `
+    <div class="code-group reveal">
+      <span class="code-label">${escapeHtml(group.label)}</span>
+      <p class="code-list">${group.items.map(escapeHtml).join('　／　')}</p>
+    </div>`
+      )
+      .join('')}
     <p class="ai-note reveal">${escapeHtml(SITE.aiNote)}</p>`
   );
 
@@ -444,26 +460,25 @@
       ? `<a ${linkAttrs}>${escapeHtml(card.name)}</a><a ${linkAttrs} aria-label="開く">${EXTERNAL_LINK_ICON}</a>`
       : escapeHtml(card.name);
 
-    const detailsHtml = DETAIL_LABELS.map(
-      (label, i) => `<p><b>${label}</b>　${escapeHtml(card.details[i])}</p>`
+    // 空の項目は見出しごと出さない
+    const block = (label, text) => (text ? `<h4>${label}</h4><p>${escapeHtml(text)}</p>` : '');
+    const detailsHtml = card.detailLabels.map((label, i) =>
+      card.details[i] ? `<p><b>${label}</b>　${escapeHtml(card.details[i])}</p>` : ''
     ).join('');
 
     modal.innerHTML = `
       <div class="modal-box" role="dialog" aria-modal="true" aria-label="${escapeHtml(card.title)}">
         <button class="modal-close" aria-label="閉じる">×</button>
         <div class="slider">
-          <div class="thumb">${thumbImage(card.images[imageIndex])}${reproductionBadge(card.isReproduction)}</div>
+          <div class="thumb">${thumbImage(card.images[imageIndex])}${imageBadge(card.isIllustration)}</div>
           ${arrowsHtml}
         </div>
         ${thumbnailsHtml}
         <h3>${titleHtml}</h3>
-        <h4>概要</h4>
-        <p>${escapeHtml(card.summary)}</p>
-        ${card.result ? `<h4>成果</h4><p>${escapeHtml(card.result)}</p>` : ''}
-        <h4>使った技術</h4>
-        <p>${escapeHtml(card.tech)}</p>
-        <h4>詳細</h4>
-        ${detailsHtml}
+        ${block('概要', card.summary)}
+        ${block('成果', card.result)}
+        ${block('使った技術', card.tech)}
+        ${detailsHtml ? `<h4>詳細</h4>${detailsHtml}` : ''}
       </div>`;
 
     if (focusSelector) modal.querySelector(focusSelector)?.focus();

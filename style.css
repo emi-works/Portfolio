@@ -376,6 +376,18 @@ a {
 
 /* ---- WORKS ---- */
 
+/* 幅は文章に合わせる（入りきらない画面でだけ折り返す） */
+.works-notice {
+  width: fit-content;
+  margin-bottom: 40px;
+  padding: 10px 16px;
+  border-left: 3px solid var(--color-accent);
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--color-subtext);
+}
+
 .works-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -417,6 +429,7 @@ a {
   position: relative;
   aspect-ratio: 4 / 3;
   background: var(--color-placeholder);
+  border: 1px solid var(--color-border); /* 背景と同じ色の画像でも境目が分かるように */
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -436,7 +449,7 @@ a {
   transform: scale(1.05);
 }
 
-.reproduction-badge {
+.image-badge {
   position: absolute;
   right: 8px;
   bottom: 6px;
@@ -503,8 +516,18 @@ a {
   margin-top: 40px;
 }
 
+.code-group {
+  margin-top: 14px;
+}
+
+.code-label {
+  display: block;
+  font-size: 13px;
+  color: var(--color-subtext);
+}
+
 .code-list {
-  margin-top: 6px;
+  margin-top: 2px;
 }
 
 .ai-note {

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- 商品画像の加工：写真と、切り抜きの選択範囲 -->
+  <rect width="400" height="300" fill="#ECE9E3"/>
+  <g fill="none" stroke="#1A202C" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="120" y="85" width="160" height="120" rx="4" fill="#fff"/>
+    <path d="M128 197 L172 150 L200 178 L232 140 L272 197 Z" fill="#DCD7CF" stroke="none"/>
+    <path d="M128 197 L172 150 L200 178 L232 140 L272 197"/>
+    <circle cx="160" cy="115" r="10"/>
+  </g>
+  <rect x="190" y="124" width="100" height="94" fill="none" stroke="#FF6B00" stroke-width="2.5" stroke-dasharray="7 6"/>
+  <g fill="#FF6B00">
+    <rect x="186" y="120" width="8" height="8"/>
+    <rect x="286" y="120" width="8" height="8"/>
+    <rect x="186" y="214" width="8" height="8"/>
+    <rect x="286" y="214" width="8" height="8"/>
+  </g>
+</svg>

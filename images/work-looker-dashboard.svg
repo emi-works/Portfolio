@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- 顧客データのダッシュボード：数値タイルとグラフ -->
+  <rect width="400" height="300" fill="#ECE9E3"/>
+  <rect x="92" y="58" width="216" height="182" rx="4" fill="#fff" stroke="#1A202C" stroke-width="2.5"/>
+  <!-- 数値タイル -->
+  <g fill="none" stroke="#DCD7CF" stroke-width="2">
+    <rect x="104" y="70" width="60" height="40" rx="2"/>
+    <rect x="170" y="70" width="60" height="40" rx="2"/>
+    <rect x="236" y="70" width="60" height="40" rx="2"/>
+    <rect x="104" y="118" width="94" height="110" rx="2"/>
+    <rect x="204" y="118" width="92" height="110" rx="2"/>
+  </g>
+  <g stroke-linecap="round">
+    <path d="M112 81 H132 M178 81 H198 M244 81 H264" stroke="#4A5568" stroke-width="2"/>
+    <path d="M112 97 H146 M178 97 H206 M244 97 H284" stroke="#1A202C" stroke-width="5"/>
+  </g>
+  <!-- 棒グラフ -->
+  <g fill="#DCD7CF">
+    <rect x="114" y="186" width="12" height="30"/>
+    <rect x="132" y="168" width="12" height="48"/>
+    <rect x="168" y="158" width="12" height="58"/>
+  </g>
+  <rect x="150" y="142" width="12" height="74" fill="#FF6B00"/>
+  <path d="M110 216 H192" stroke="#1A202C" stroke-width="2"/>
+  <!-- 折れ線グラフ -->
+  <path d="M212 216 H290" stroke="#1A202C" stroke-width="2"/>
+  <path d="M214 196 L234 182 L252 188 L270 160 L288 146" fill="none" stroke="#FF6B00" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <g fill="#fff" stroke="#FF6B00" stroke-width="2">
+    <circle cx="234" cy="182" r="3"/>
+    <circle cx="252" cy="188" r="3"/>
+    <circle cx="270" cy="160" r="3"/>
+  </g>
+</svg>

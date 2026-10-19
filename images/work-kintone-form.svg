@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- サポート対応の記録アプリ：入力フォームと、条件で出てくる項目・アラート -->
+  <rect width="400" height="300" fill="#ECE9E3"/>
+  <rect x="110" y="52" width="180" height="186" rx="4" fill="#fff" stroke="#1A202C" stroke-width="2.5"/>
+  <path d="M110 74 H290" stroke="#1A202C" stroke-width="2"/>
+  <g fill="#DCD7CF">
+    <circle cx="124" cy="63" r="3.5"/>
+    <circle cx="136" cy="63" r="3.5"/>
+    <circle cx="148" cy="63" r="3.5"/>
+  </g>
+  <g stroke="#4A5568" stroke-width="2.5" stroke-linecap="round">
+    <path d="M126 90 H160"/>
+    <path d="M126 124 H170"/>
+  </g>
+  <g fill="none" stroke="#1A202C" stroke-width="2">
+    <rect x="126" y="97" width="148" height="16" rx="2"/>
+    <rect x="126" y="131" width="148" height="16" rx="2"/>
+  </g>
+  <!-- 条件で表示される項目 -->
+  <path d="M126 160 H176" stroke="#FF6B00" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="126" y="167" width="148" height="16" rx="2" fill="#FFF4EC" stroke="#FF6B00" stroke-width="2" stroke-dasharray="6 4"/>
+  <rect x="214" y="206" width="60" height="18" rx="2" fill="#1A202C"/>
+  <!-- アラート -->
+  <circle cx="290" cy="175" r="16" fill="#FF6B00"/>
+  <path d="M290 166 V178" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="290" cy="184" r="2" fill="#fff"/>
+</svg>

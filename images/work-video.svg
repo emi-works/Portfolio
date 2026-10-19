@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- 動画編集：プレビュー画面（テロップ入り）とタイムライン -->
+  <rect width="400" height="300" fill="#ECE9E3"/>
+  <rect x="110" y="58" width="180" height="101" rx="4" fill="#fff" stroke="#1A202C" stroke-width="2.5"/>
+  <path d="M191 92 V120 L214 106 Z" fill="#1A202C"/>
+  <rect x="140" y="135" width="120" height="11" rx="2" fill="#FF6B00"/>
+  <g fill="none" stroke="#1A202C" stroke-width="2">
+    <rect x="110" y="180" width="180" height="16" rx="2"/>
+    <rect x="110" y="202" width="180" height="16" rx="2"/>
+    <rect x="110" y="224" width="180" height="16" rx="2"/>
+  </g>
+  <g fill="#DCD7CF">
+    <rect x="113" y="183" width="64" height="10"/>
+    <rect x="181" y="183" width="92" height="10"/>
+  </g>
+  <rect x="146" y="205" width="78" height="10" fill="#FF6B00"/>
+  <path d="M118 230 v4 M126 228 v8 M134 227 v10 M142 229 v6 M150 226 v12 M158 228 v8 M166 230 v4 M174 227 v10 M182 229 v6 M190 226 v12 M210 228 v8 M218 227 v10 M226 230 v4 M234 228 v8 M242 226 v12 M250 229 v6 M258 227 v10 M266 230 v4 M274 228 v8 M282 229 v6" stroke="#4A5568" stroke-width="2" stroke-linecap="round"/>
+  <path d="M200 172 V246" stroke="#FF6B00" stroke-width="2"/>
+  <path d="M194 168 H206 L200 175 Z" fill="#FF6B00"/>
+</svg>

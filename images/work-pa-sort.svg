@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- 添付ファイルの自動仕分け：メールの添付ファイルを条件ごとのフォルダへ -->
+  <rect width="400" height="300" fill="#ECE9E3"/>
+  <!-- メール -->
+  <rect x="78" y="120" width="88" height="60" rx="3" fill="#fff" stroke="#1A202C" stroke-width="2.5"/>
+  <path d="M78 122 L122 154 L166 122" fill="none" stroke="#1A202C" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- 添付ファイル -->
+  <path d="M136 92 H156 L166 102 V130 H136 Z" fill="#fff" stroke="#1A202C" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M156 92 V102 H166" fill="none" stroke="#1A202C" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M142 113 H158 M142 121 H154" stroke="#4A5568" stroke-width="2" stroke-linecap="round"/>
+  <!-- 振り分け -->
+  <g fill="none" stroke="#DCD7CF" stroke-width="2.5" stroke-linecap="round">
+    <path d="M178 150 C 210 150, 210 88, 240 88"/>
+    <path d="M178 150 C 210 150, 210 212, 240 212"/>
+  </g>
+  <path d="M178 150 H240" fill="none" stroke="#FF6B00" stroke-width="3" stroke-linecap="round"/>
+  <path d="M232 143 L241 150 L232 157" fill="none" stroke="#FF6B00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- フォルダ -->
+  <g fill="#fff" stroke="#1A202C" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M250 74 H270 L276 80 H316 V106 H250 Z"/>
+    <path d="M250 198 H270 L276 204 H316 V230 H250 Z"/>
+  </g>
+  <path d="M250 136 H270 L276 142 H316 V168 H250 Z" fill="#FFF4EC" stroke="#FF6B00" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M276 154 l6 6 l12 -12" fill="none" stroke="#FF6B00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
