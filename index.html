@@ -65,7 +65,15 @@
   </script>
 </head>
 <body>
+  <!-- 背景（紙の質感・セクション名の大きな文字・図形）。動きは background.js -->
+  <div class="bg-layer" id="bg-grain"></div>
+  <div class="bg-layer" id="bg-word"></div>
+  <div class="bg-layer" id="bg-shapes"><svg></svg></div>
+
   <div id="section-label"></div>
+
+  <!-- どのセクションからでも CONTACT へ移動するボタン -->
+  <button id="contact-cta" type="button" aria-label="お問い合わせへ移動">CONTACT<svg class="cta-arrow" viewBox="0 0 16 10" aria-hidden="true"><path d="M0 5 H14 M10 1 L14 5 L10 9"/></svg></button>
 
   <nav id="nav" aria-label="セクション">
     <ul></ul>
@@ -78,6 +86,7 @@
   <div id="modal" hidden></div>
 
   <script src="content.js"></script>
+  <script src="background.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

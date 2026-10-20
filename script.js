@@ -246,6 +246,9 @@
 
   const navList = $('#nav ul');
   const navMarker = $('.nav-marker');
+  const contactCta = $('#contact-cta');
+  const contactIndex = sections.findIndex((section) => section.name === 'CONTACT');
+  if (contactCta) contactCta.addEventListener('click', () => goTo(contactIndex));
   const sectionLabel = $('#section-label');
   const modal = $('#modal');
 
@@ -316,6 +319,12 @@
 
     // TOP ではラベルを出さない
     updateSectionLabel(index ? sections[index].name : '', direction);
+
+    // CONTACT 表示中はお問い合わせボタンを隠す
+    if (contactCta) contactCta.classList.toggle('is-hidden', index === contactIndex);
+
+    // 背景（background.js）に切り替えを知らせる
+    dispatchEvent(new CustomEvent('sectionchange', { detail: { index, name: sections[index].name, direction } }));
 
     track('section_view', { section_name: sections[index].name });
   }
