@@ -717,6 +717,7 @@ textarea {
 
 .modal-box {
   position: relative;
+  --arrow-col: 36px; /* スライダーの矢印の列 */
   width: min(820px, 100%);
   max-height: 92vh;
   overflow-y: auto;
@@ -734,30 +735,37 @@ textarea {
   line-height: 1.4;
 }
 
-.slider {
-  position: relative;
+/* 画像が複数のときは、矢印を画像に重ねず左右の列に置く */
+.slider:has(.slider-arrow) {
+  display: grid;
+  grid-template-columns: var(--arrow-col) 1fr var(--arrow-col);
+  align-items: center;
+  gap: 4px;
 }
 
 .slider .thumb {
+  grid-row: 1;
+  grid-column: 2;
   aspect-ratio: 16 / 10;
 }
 
 .slider-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 3;
-  width: 44px;
+  grid-row: 1;
   height: 44px;
   font-size: 34px;
 }
 
 .slider-arrow.prev {
-  left: 6px;
+  grid-column: 1;
 }
 
 .slider-arrow.next {
-  right: 6px;
+  grid-column: 3;
+}
+
+/* サムネイルも画像の左端に揃える */
+.slider:has(.slider-arrow) + .thumbnails {
+  padding-left: calc(var(--arrow-col) + 4px);
 }
 
 .thumbnails {
@@ -818,6 +826,20 @@ textarea {
 }
 
 @media (max-width: 700px) {
+  /* 画像を小さくしすぎないよう、余白と矢印の列を狭く */
+  .modal-box {
+    --arrow-col: 26px;
+    padding: 52px 16px 20px; /* 上は「×」と画像が重ならない分あける */
+  }
+
+  .slider-arrow {
+    font-size: 28px;
+  }
+
+  .thumbnails button {
+    width: 44px;
+  }
+
   :root {
     --pad-top: 12vh;
     --pad-right: 11vw;
