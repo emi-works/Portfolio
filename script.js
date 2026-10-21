@@ -83,12 +83,14 @@
             ...card,
             isIllustration: Boolean(group.isIllustration),
             detailLabels: card.detailLabels || group.detailLabels || DETAIL_LABELS,
+            detailStyle: group.detailStyle,
           });
+          const cardNote = card.cardNote || card.result; // タイトル下の一文（なければ成果）
           return `
           <button class="card reveal" data-index="${index}">
-            <span class="thumb">${thumbImage(card.images[0])}${imageBadge(group.isIllustration)}</span>
+            <span class="thumb">${thumbImage(card.cardImage || card.images[0])}${imageBadge(group.isIllustration)}</span>
             <span class="card-title">${escapeHtml(card.title)}</span>
-            ${card.result ? `<span class="card-result">${escapeHtml(card.result)}</span>` : ''}
+            ${cardNote ? `<span class="card-result">${escapeHtml(cardNote)}</span>` : ''}
           </button>`;
         })
         .join('');
@@ -471,9 +473,34 @@
 
     // 空の項目は見出しごと出さない
     const block = (label, text) => (text ? `<h4>${label}</h4><p>${escapeHtml(text)}</p>` : '');
-    const detailsHtml = card.detailLabels.map((label, i) =>
-      card.details[i] ? `<p><b>${label}</b>　${escapeHtml(card.details[i])}</p>` : ''
-    ).join('');
+    const listOrText = (value) =>
+      Array.isArray(value)
+        ? `<ul class="detail-list">${value.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`
+        : `<p>${escapeHtml(value)}</p>`;
+    const hasValue = (value) => (Array.isArray(value) ? value.length > 0 : Boolean(value));
+
+    // 詳細：見出しごとに分ける形（kintoneデモ）と、「詳細」の下にまとめる形
+    const detailsHtml =
+      card.detailStyle === 'sections'
+        ? card.detailLabels.map((label, i) => (hasValue(card.details[i]) ? `<h4>${label}</h4>${listOrText(card.details[i])}` : '')).join('')
+        : card.detailLabels.map((label, i) =>
+            card.details[i] ? `<p><b>${label}</b>　${escapeHtml(card.details[i])}</p>` : ''
+          ).join('');
+
+    // 使った技術はタグで表示（「、」「・」「,」「/」区切りの文字でも配列でもよい）
+    const techTags = (Array.isArray(card.tech) ? card.tech : String(card.tech || '').split(/\s*[、・,，／/]\s*/))
+      .map((t) => t.trim())
+      .filter(Boolean);
+    const techHtml = techTags.length
+      ? `<h4>使った技術</h4><ul class="tech-tags">${techTags.map((t) => `<li>${escapeHtml(t)}</li>`).join('')}</ul>`
+      : '';
+
+    // 独立したリンク（GitHub など）
+    const linksHtml = (card.links || []).length
+      ? `<p class="modal-links">${card.links
+          .map((l) => `<a href="${escapeHtml(l.url)}" target="_blank" rel="noopener">${escapeHtml(l.label)}${EXTERNAL_LINK_ICON}</a>`)
+          .join('')}</p>`
+      : '';
 
     modal.innerHTML = `
       <div class="modal-box" role="dialog" aria-modal="true" aria-label="${escapeHtml(card.title)}">
@@ -486,8 +513,12 @@
         <h3>${titleHtml}</h3>
         ${block('概要', card.summary)}
         ${block('成果', card.result)}
-        ${block('使った技術', card.tech)}
-        ${detailsHtml ? `<h4>詳細</h4>${detailsHtml}` : ''}
+        ${
+          card.detailStyle === 'sections'
+            ? `${detailsHtml}${techHtml}`
+            : `${techHtml}${detailsHtml ? `<h4>詳細</h4>${detailsHtml}` : ''}`
+        }
+        ${linksHtml}
       </div>`;
 
     if (focusSelector) modal.querySelector(focusSelector)?.focus();

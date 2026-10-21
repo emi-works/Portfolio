@@ -23,6 +23,14 @@
     details: [problem, action, point],
   });
 
+  // kintoneデモ用。1アプリ = 1枚。困りごと・解決したこと・工夫した点を見出しごとに表示する
+  // （solutions / points は1要素 = 箇条書き1行）
+  // cardImage を指定するとカードだけその画像にする（なければ images の1枚目）
+  const kintoneDemo = ({ title, cardNote, problem, solutions = [], points = [], tech = [], images, cardImage, links = [] }) => ({
+    ...work(tech, { title, name: title, summary: '', cardNote, images, cardImage, links }),
+    details: [problem, solutions, points],
+  });
+
   // 個人制作用（詳細の項目名が「きっかけ / できること / こだわり」）
   const appWork = ({ title, tech = '', summary = '', trigger = '', features = '', point = '', images, url = '' }) => ({
     ...work(tech, { title, name: title, summary, url, ...(images && { images }) }),
@@ -44,10 +52,102 @@
     ],
 
     // WORKS（isIllustration: 画像に「イメージ」ラベルを付ける）
-    worksNotice: '業務で制作したものは社外に公開できないため、実物の代わりに内容をイメージしたイラストで紹介しています（個人制作を除く）。',
+    worksNotice: '社外に公開できない業務の制作物は、実物の代わりに内容をイメージしたイラストで紹介しています（画像に「イメージ」と表示）。',
     works: [
       {
-        title: '業務効率化',
+        title: '業務効率化（公開）',
+        detailLabels: ['困りごと', '解決したこと', '工夫した点'],
+        detailStyle: 'sections', // ポップアップで項目ごとに見出しを付けて表示
+        cards: [
+          kintoneDemo({
+            title: '案件・顧客管理アプリ（kintone）',
+            cardNote: 'ステータス別の必須チェックと期限の色分けで、入力漏れと期限切れを防止',
+            problem: 'Excelの案件管理表をkintoneに移したら、入力漏れと期限切れが増えた',
+            solutions: [
+              'ステータス（リード／提案中／見積提出／受注／失注）に応じて、入力項目と見出しを出し分け',
+              'ステータスごとに必須項目を切り替え、未入力なら保存できないようにした（一覧画面での直接編集も対象）',
+              '一覧画面で、期限を過ぎた案件を赤、3日以内の案件を黄色で色分け。アプリ全体の「期限切れ◯件」も表示',
+            ],
+            points: [
+              '一覧画面から直接編集すると必須チェックをすり抜けられる「抜け道」も塞いだ',
+              '必須マークを付けられない仕様のため、「いま何が必須か」を画面上部に固定表示した',
+              '期限切れの件数はREST APIで数え、2ページ目以降に隠れた案件も見落とさないようにした',
+              '色だけに頼らず、「3日超過」「あと2日」などの文字でも状態が分かるようにした',
+              'ステータスごとのルールを1か所の設定にまとめ、運用が変わってもすぐ直せるコードにした',
+            ],
+            tech: ['kintone', 'JavaScript', 'kintone REST API', 'CSS'],
+            images: [
+              'images/kintone-deal-1.jpg', // 一覧画面（期限の色分け・件数表示）。カードの画像
+              'images/kintone-deal-2.jpg', // ステータスで項目を出し分け
+              'images/kintone-deal-3.jpg', // 未入力で保存したときのエラー
+              'images/kintone-deal-4.jpg', // 一覧画面での直接編集を止める
+              'images/kintone-deal-5.jpg', // 詳細画面の期限の警告
+            ],
+            links: [
+              { label: 'GitHub（コード・設定手順）', url: 'https://github.com/emi-works/kintone-demo/tree/main/01-deal-management' },
+            ],
+          }),
+          kintoneDemo({
+            title: '見積→請求 連動アプリ（kintone）',
+            cardNote: '見積から請求書をボタン1つで作成し、インボイス対応の帳票まで手入力なしで出力',
+            problem: '見積書から請求書を作るとき、同じ内容を何度も手入力している',
+            solutions: [
+              '明細ごとに税率（10%／軽減8%）を選ぶだけで、税率ごとの対象額・消費税・合計を自動計算（インボイス制度に対応）',
+              '受注した見積に「請求書を作成」ボタンを表示。採番・明細の転記・見積の「請求済み」への切り替えまで、ボタン1つで実行',
+              '有料プラグインなしで、A4の見積書・請求書を印刷・PDF保存できるようにした',
+              '見積番号・請求番号の自動採番、有効期限・支払期限の自動入力、支払期限を過ぎた未入金の赤色表示',
+            ],
+            points: [
+              '押した瞬間に見積を読み直し、請求書の二重作成を防いだ（処理中はボタンを押せない）',
+              '請求書を作れるのは「受注」の見積だけ。「請求済み」は手で選べないようにし、一覧画面での直接編集も対象にした',
+              '消費税は「税率ごとの合計×税率」で1回だけ計算し、整数で計算して1円のずれも出ないようにした',
+              '帳票はブラウザの印刷機能と印刷用CSSだけで作り、月額費用のかかるプラグインを不要にした',
+              '税計算・採番・帳票は2つのアプリで共通のファイルにまとめ、直し忘れが起きない構成にした',
+              'アプリの構成もコードで定義し、REST APIで別の環境にも数秒で再現できるようにした',
+            ],
+            tech: ['kintone', 'JavaScript', 'kintone REST API', 'CSS', 'Node.js'],
+            images: [
+              'images/kintone-quote-1.jpg', // 見積から請求への転記。カードの画像
+              'images/kintone-quote-2.jpg', // 明細と税率ごとの計算
+              'images/kintone-quote-3.jpg', // 見積書・請求書の帳票
+              'images/kintone-quote-4.jpg', // 請求一覧の期限超過
+            ],
+            links: [
+              { label: 'GitHub（コード・設定手順）', url: 'https://github.com/emi-works/kintone-demo/tree/main/02-quote-invoice' },
+            ],
+          }),
+          kintoneDemo({
+            title: '問い合わせの自動登録・通知（kintone）',
+            cardNote: 'フォーム・メールの問い合わせを自動でkintoneに登録し、担当者へすぐに通知',
+            problem: 'フォームやメールで来た問い合わせを、毎回kintoneに手で入力している',
+            solutions: [
+              'Googleフォームの回答は送信と同時に、Gmailの問い合わせメールはラベルを付けるだけで5分おきに、kintoneへ自動登録',
+              '種別と本文の言葉（「至急」「エラー」など）から優先度を判定し、担当者を割り当ててメールですぐに通知（Chatworkにも対応）',
+              '優先度に応じて一次回答期限を自動設定。一覧で期限切れを赤、期限間近を黄色で表示し、「未対応」「期限切れ」「今日の受付」の件数も表示',
+            ],
+            points: [
+              '登録に失敗したときはフォームの内容を管理者にメールで送り、メールは次の実行で自動でやり直して、取りこぼしをなくした（混雑時は最大3回再試行）',
+              'フォームの回答ID・メールのIDで重複を確認し、同時に動いても二重登録しないようロック機能も使った',
+              'APIトークンはコードに書かず、GASのスクリプトプロパティで管理。権限も最小限にした',
+              'kintone側にも期限の色分け・件数表示・「対応を開始する」ボタンを用意し、完了時は対応メモを必須にして対応漏れも防いだ',
+              '優先度を上げる言葉・担当者・回答期限はGASの先頭の設定だけで変えられ、お客様の担当者が自分で調整できる',
+            ],
+            tech: ['Google Apps Script', 'kintone', 'kintone REST API', 'JavaScript', 'CSS', 'Chatwork API', 'Node.js'],
+            cardImage: 'images/kintone-inquiry-2.jpg', // カードはフォーム→kintone の画面（①の一覧と見た目が重ならないように）
+            images: [
+              'images/kintone-inquiry-1.jpg', // しくみの全体図（ポップアップの1枚目）
+              'images/kintone-inquiry-2.jpg', // フォームから kintone へ登録
+              'images/kintone-inquiry-3.jpg', // 問い合わせ一覧（期限の色分け・件数）
+              'images/kintone-inquiry-4.jpg', // 担当者への通知メール
+            ],
+            links: [
+              { label: 'GitHub（コード・設定手順）', url: 'https://github.com/emi-works/kintone-demo/tree/main/03-inquiry-automation' },
+            ],
+          }),
+        ],
+      },
+      {
+        title: '業務効率化（非公開）',
         isIllustration: true,
         cards: [
           filledWork({
