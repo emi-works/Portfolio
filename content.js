@@ -40,7 +40,7 @@
   window.SITE = {
     // TOP
     name: 'EMI HASEGAWA',
-    catch: ['「やりたい」を形にする', 'デジタルクリエイター'], // 幅1000px以下ではここで改行
+    catch: ['「やりたい」を形にする', '業務効率化エンジニア'], // 幅1000px以下ではここで改行
     lead: '業務効率化（kintone・Excel VBA・Power Automate）とWeb制作を中心に、アプリ制作や動画編集まで、ITの力であなたのアイデアを具現化します。',
 
     // PROFILE
