@@ -6,27 +6,46 @@
   const wordLayer = document.getElementById('bg-word');
   const svg = document.querySelector('#bg-shapes svg');
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)'); // 途中で設定が変わっても追従する
+
+  // 画面の大きさ。毎フレーム読むとレイアウトの再計算が起きうるので、変わったときだけ更新する
+  let viewW = innerWidth;
+  let viewH = innerHeight;
 
   // ---- 大きな文字 ----
+
+  // 当たり判定に使う文字の範囲。測るのは、文字の移動が終わったとき・フォントの読み込み後・
+  // 画面サイズの変更時だけ。移動中は null にして、文字との当たり判定を止める
+  let wordBox = null;
+
+  const currentWord = () => wordLayer.querySelector('span:not(.is-leaving)');
 
   // 長い単語でも左右が画面に収まるよう、文字を縮める
   const fitWord = (span) => {
     span.style.fontSize = '';
-    const max = innerWidth * 0.96;
+    const max = viewW * 0.96;
     const width = span.getBoundingClientRect().width;
     if (width > max) {
       span.style.fontSize = `${parseFloat(getComputedStyle(span).fontSize) * (max / width)}px`;
     }
   };
 
+  const measureWord = () => {
+    const span = currentWord();
+    wordBox = span && !span.isMoving ? inkBox(span) : null;
+  };
+
   const updateWord = (name, direction) => {
+    // 動きを減らす設定では移動せず、フェードだけで入れ替える
+    const shift = reduceMotion.matches ? 0 : 30;
+    wordBox = null;
+
     // 消えかけの文字はすぐ消す（画面に出るのは「出ていく1つ＋入ってくる1つ」まで）
     wordLayer.querySelectorAll('span.is-leaving').forEach((s) => s.remove());
     const old = wordLayer.querySelector('span');
     if (old) {
       old.classList.add('is-leaving');
-      old.style.transform = `translateY(${direction > 0 ? -30 : 30}%)`;
+      old.style.transform = `translateY(${direction > 0 ? -shift : shift}%)`;
       old.style.opacity = 0;
       setTimeout(() => old.remove(), 600);
     }
@@ -34,11 +53,22 @@
 
     const span = document.createElement('span');
     span.textContent = name;
-    span.style.transform = `translateY(${direction > 0 ? 30 : -30}%)`;
+    span.style.transform = `translateY(${direction > 0 ? shift : -shift}%)`;
     span.style.opacity = 0;
     wordLayer.appendChild(span);
     fitWord(span);
-    document.fonts.ready.then(() => fitWord(span)); // フォント読み込み後に測り直す
+
+    if (shift) {
+      span.isMoving = true;
+      span.addEventListener('transitionend', (e) => {
+        if (e.target !== span || e.propertyName !== 'transform') return;
+        span.isMoving = false;
+        measureWord();
+      });
+    } else {
+      measureWord();
+    }
+
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         span.style.transform = 'none';
@@ -163,7 +193,7 @@
     return { nx: normal[0], ny: normal[1], depth };
   };
 
-  // 大きな文字の、線がある範囲（行の余白は除く）
+  // 大きな文字の、線がある範囲（行の余白は除く）。DOM を読むので毎フレームは呼ばない（measureWord から）
   // 上下は、文字の中に置いた大きさ0の目印でベースラインを実測して求める
   const measureCtx = document.createElement('canvas').getContext('2d');
   const inkBox = (span) => {
@@ -174,24 +204,14 @@
       span.appendChild(mark);
     }
     const cs = getComputedStyle(span);
-    const key = `${cs.fontSize}|${document.fonts.status}`;
-    if (span._inkKey !== key) {
-      measureCtx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-      const m = measureCtx.measureText(span.textContent);
-      span._ink = {
-        ascent: m.actualBoundingBoxAscent,
-        descent: m.actualBoundingBoxDescent,
-        left: -m.actualBoundingBoxLeft,
-        right: m.actualBoundingBoxRight,
-      };
-      span._inkKey = key;
-    }
+    measureCtx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const m = measureCtx.measureText(span.textContent);
     const rect = span.getBoundingClientRect();
     const baseline = mark.getBoundingClientRect().top;
-    const left = rect.left + span._ink.left;
-    const right = rect.left + span._ink.right;
-    const top = baseline - span._ink.ascent;
-    const bottom = baseline + span._ink.descent;
+    const left = rect.left - m.actualBoundingBoxLeft;
+    const right = rect.left + m.actualBoundingBoxRight;
+    const top = baseline - m.actualBoundingBoxAscent;
+    const bottom = baseline + m.actualBoundingBoxDescent;
     return {
       pts: [[left, top], [right, top], [right, bottom], [left, bottom]],
       cx: (left + right) / 2,
@@ -208,13 +228,13 @@
     }
   };
 
+  // 毎フレームの処理。DOM は読まない（書き込みは図形の transform だけ）
   const step = (time) => {
     const dt = lastTime ? Math.min(0.05, (time - lastTime) / 1000) : 0;
     lastTime = time;
-    const W = innerWidth;
-    const H = innerHeight;
-    const span = wordLayer.querySelector('span:not(.is-leaving)');
-    const word = span ? inkBox(span) : null;
+    const W = viewW;
+    const H = viewH;
+    const word = wordBox;
 
     shapes.forEach((s) => {
       s.x += s.vx * dt;
@@ -272,14 +292,19 @@
   };
 
   const startShapes = () => {
-    if (rafId || reduceMotion) return;
+    if (rafId || reduceMotion.matches) return;
     lastTime = 0;
     rafId = requestAnimationFrame(step);
   };
 
+  const stopShapes = () => {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  };
+
   const drawShapes = (index) => {
-    const W = innerWidth;
-    const H = innerHeight;
+    const W = viewW;
+    const H = viewH;
     const unit = Math.min(W, H);
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
@@ -335,9 +360,22 @@
     drawShapes(index);
   });
 
-  addEventListener('resize', () => {
-    svg.setAttribute('viewBox', `0 0 ${innerWidth} ${innerHeight}`);
-    const span = wordLayer.querySelector('span:not(.is-leaving)');
+  // 文字の大きさが変わったら、縮め直して当たり判定の範囲を測り直す
+  const refitWord = () => {
+    const span = currentWord();
     if (span) fitWord(span);
+    measureWord();
+  };
+
+  addEventListener('resize', () => {
+    viewW = innerWidth;
+    viewH = innerHeight;
+    svg.setAttribute('viewBox', `0 0 ${viewW} ${viewH}`);
+    refitWord();
   });
+
+  document.fonts.ready.then(refitWord);
+  document.fonts.addEventListener('loadingdone', refitWord);
+
+  reduceMotion.addEventListener('change', () => (reduceMotion.matches ? stopShapes() : startShapes()));
 })();

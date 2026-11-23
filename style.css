@@ -15,8 +15,14 @@
 
   --ease-section: cubic-bezier(.7, 0, .2, 1);
 
-  /* 全ページ共通の余白 */
-  --pad-top: 14vh;
+  /* 左上のセクション名（h2）と右上の「CONTACT →」の位置。--label-bottom はセクション名の下端 */
+  --label-top: max(28px, env(safe-area-inset-top));
+  --label-size: 28px;
+  --label-bottom: calc(var(--label-top) + var(--label-size) * 1.7);
+  --label-gap: 24px; /* セクション名と本文の最低限の間隔。スクロール時のフェードの長さも兼ねる */
+
+  /* 全ページ共通の余白（上はセクション名より必ず下にする） */
+  --pad-top: max(14vh, calc(var(--label-bottom) + var(--label-gap)));
   --pad-right: 12vw;
   --pad-bottom: 12vh;
   --pad-left: 9vw;
@@ -79,10 +85,9 @@ a {
 .section {
   position: absolute;
   inset: 0;
-  opacity: 0;
   transform: translateY(10%);
   pointer-events: none;
-  transition: transform 1s var(--ease-section), opacity .9s;
+  transition: transform 1s var(--ease-section);
 }
 
 .section.is-above {
@@ -90,9 +95,26 @@ a {
 }
 
 .section.is-current {
-  opacity: 1;
   transform: none;
   pointer-events: auto;
+}
+
+/* 動きを減らす設定では移動せず、中身のフェードだけで切り替える */
+@media (prefers-reduced-motion: reduce) {
+  .section {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+/* フェードはセクションの中身にかける。セクション名（h2）は自分のフェードで入れ替わる */
+.section > :not(.section-title-wrap) {
+  opacity: 0;
+  transition: opacity .9s;
+}
+
+.section.is-current > :not(.section-title-wrap) {
+  opacity: 1;
 }
 
 .section-scroll {
@@ -103,18 +125,21 @@ a {
   flex-direction: column;
   scrollbar-width: none;
   overscroll-behavior: contain;
+  /* スクロールした本文は、セクション名と「CONTACT →」の高さに来る前に消す（背景は隠さない） */
+  -webkit-mask-image: linear-gradient(transparent var(--label-bottom), #000 calc(var(--label-bottom) + var(--label-gap)));
+  mask-image: linear-gradient(transparent var(--label-bottom), #000 calc(var(--label-bottom) + var(--label-gap)));
 }
 
 .section-scroll::-webkit-scrollbar {
   display: none;
 }
 
-/* 短いときは上下中央 */
+/* 中身は上から詰める（PROFILE だけ下の .section-profile で下寄せにする） */
 .section-inner {
   margin: 0;
 }
 
-/* --i は script.js で付与 */
+/* 表示中のセクションの中身を、少し下から順番にフェードインさせる。順番の --i は script.js で付与 */
 .reveal {
   opacity: 0;
   transform: translateY(28px);
@@ -125,6 +150,12 @@ a {
   opacity: 1;
   transform: none;
   transition-delay: calc(var(--i, 0) * 90ms + 350ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transform: none;
+  }
 }
 
 /* ---- background ---- */
@@ -143,12 +174,13 @@ a {
   opacity: .14;
 }
 
-/* セクション名の大きなアウトライン文字 */
+/* 大きな文字と図形は、紙の質感より奥に置く */
 #bg-word,
 #bg-shapes {
   z-index: -2;
 }
 
+/* セクション名の大きなアウトライン文字。入れ替わりの動きは background.js */
 #bg-word span {
   position: absolute;
   right: 2vw;
@@ -165,7 +197,14 @@ a {
   transition: transform .6s var(--ease-section), opacity .4s;
 }
 
-/* ベースライン計測用の目印（background.js） */
+/* 動きを減らす設定では移動せず、フェードだけで入れ替わる（background.js も移動させない） */
+@media (prefers-reduced-motion: reduce) {
+  #bg-word span {
+    transform: none !important;
+  }
+}
+
+/* 大きな文字のベースラインを測るための目印（background.js の当たり判定用） */
 .baseline-mark {
   display: inline-block;
   width: 0;
@@ -173,7 +212,7 @@ a {
   vertical-align: baseline;
 }
 
-/* 漂う図形 */
+/* 漂う図形（動きを減らす設定では background.js が動かさない） */
 #bg-shapes svg {
   width: 100%;
   height: 100%;
@@ -190,29 +229,78 @@ a {
   stroke: rgba(255, 107, 0, .5);
 }
 
-/* ---- section label / nav ---- */
+/* ---- section title (h2) / nav ---- */
 
-#section-label {
-  position: fixed;
-  top: max(28px, env(safe-area-inset-top));
+/* 各セクションの h2（左上のセクション名）を包む枠。セクションと同じ大きさで、
+   セクションの上下移動と逆向きに同じだけ動かし、見出しが画面上で止まって見えるようにする */
+.section-title-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  transform: translateY(-10%);
+  transition: transform 1s var(--ease-section);
+}
+
+.section.is-above .section-title-wrap {
+  transform: translateY(10%);
+}
+
+.section.is-current .section-title-wrap {
+  transform: none;
+}
+
+/* 文字はこの枠の中だけで動く（枠の外は見えない） */
+.section-title {
+  position: absolute;
+  top: var(--label-top);
   left: var(--pad-left);
   width: 60vw;
   height: 1.7em;
   overflow: hidden;
-  z-index: 5;
-  font: 400 28px/1.7 var(--font-serif);
+  font: 400 var(--label-size)/1.7 var(--font-serif);
   letter-spacing: 0;
   color: var(--color-subtext);
 }
 
-#section-label span {
+/* 下にあるセクションの名前は枠の下、通り過ぎたセクションの名前は枠の上で待機する。
+   下へ進むと古い名前は上へ抜け、新しい名前は下から入る（上へ戻るときは逆向き） */
+.section-title span {
   position: absolute;
   left: 0;
   top: 0;
+  opacity: 0;
+  transform: translateY(100%);
   transition: transform .7s, opacity .7s;
 }
 
+.section.is-above .section-title span {
+  transform: translateY(-100%);
+}
+
+.section.is-current .section-title span {
+  opacity: 1;
+  transform: none;
+}
+
+/* 動きを減らす設定では移動せず、フェードだけで入れ替わる */
+@media (prefers-reduced-motion: reduce) {
+  .section-title-wrap,
+  .section-title span {
+    transform: none !important;
+  }
+
+  .section-title-wrap {
+    transition: none;
+  }
+
+  .section-title span {
+    transition: opacity .7s;
+  }
+}
+
 #nav {
+  --nav-item-h: 38px; /* 項目の間隔（現在地マーカーの高さも同じ） */
   position: fixed;
   right: 3vw;
   top: 50%;
@@ -231,16 +319,15 @@ a {
   content: "";
   position: absolute;
   right: 6px;
-  top: 19px;
-  bottom: 19px;
+  top: calc(var(--nav-item-h) / 2);
+  bottom: calc(var(--nav-item-h) / 2);
   width: 1px;
   background: var(--color-line);
 }
 
-/* 高さは script.js の NAV_ITEM_HEIGHT と合わせる */
 #nav li {
   position: relative;
-  height: 38px;
+  height: var(--nav-item-h);
 }
 
 #nav button {
@@ -292,16 +379,36 @@ a {
   right: 0;
   top: 0;
   width: 14px;
-  height: 38px;
+  height: var(--nav-item-h);
   pointer-events: none;
-  transition: transform .8s var(--ease-section);
+  transition: transform .8s var(--ease-section); /* 位置は script.js が li の offsetTop から付ける */
 }
+
+.nav-marker::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-marker {
+    transition: none;
+  }
+}
+
+/* ---- CONTACT button ---- */
 
 /* どのセクションからでも押せるお問い合わせボタン（右上） */
 /* ナビのラベルと同じ大きさのセリフ体。普段は控えめなグレー、触れたときだけオレンジ */
 #contact-cta {
   position: fixed;
-  top: max(28px, env(safe-area-inset-top));
+  top: var(--label-top);
   right: 3vw;
   z-index: 6;
   padding: 2px 0;
@@ -354,21 +461,15 @@ a {
   transform: translateX(3px);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  #contact-cta:hover .cta-arrow {
+    transform: none;
+  }
+}
+
 #contact-cta.is-hidden {
   opacity: 0;
   pointer-events: none;
-}
-
-.nav-marker::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  margin: -6px;
-  border-radius: 50%;
-  background: var(--color-accent);
 }
 
 /* ---- common ---- */
@@ -453,25 +554,33 @@ a {
   }
 }
 
+/* 名前は上下の行の間（行の高さが同じなら画面中央）、キャッチは下の行の右下。
+   キャッチが長くて下の行に収まらないときは、下の行が広がって名前を上へ押し出す */
+.section-top {
+  --hero-text-left: var(--axis); /* キャッチの左端 */
+  display: grid;
+  grid-template-columns: var(--hero-text-left) minmax(0, 1fr);
+  grid-template-rows: minmax(calc(var(--label-bottom) + 8px), 1fr) auto 1fr; /* 上の行は「CONTACT →」と重ならない高さを確保 */
+}
+
 .hero-name-wrap {
-  position: absolute;
-  inset: 0;
+  grid-area: 2 / 1 / 3 / -1;
   display: grid;
   place-items: center;
 }
 
+/* 320px でもナビの点に触れない大きさまで縮める（390px 以上は 40px 〜 7vw） */
 .hero-name {
-  font: 400 clamp(40px, 7vw, 150px)/1 var(--font-serif);
+  font: 400 clamp(min(10.3vw, 40px), 7vw, 150px)/1 var(--font-serif);
   letter-spacing: 0;
   white-space: nowrap;
 }
 
-/* 左端を基準線に揃える */
+/* 左端を基準線に揃える。上の padding は名前との最低限の間隔 */
 .hero-text {
-  position: absolute;
-  left: var(--axis);
-  right: var(--pad-right);
-  bottom: var(--pad-bottom);
+  grid-area: 3 / 2;
+  align-self: end;
+  padding: 24px var(--pad-right) var(--pad-bottom) 0;
 }
 
 .hero-catch {
@@ -570,13 +679,22 @@ a {
 .thumb-image {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   transition: transform .6s;
 }
 
 .card:hover .thumb-image {
   transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover .thumb-image {
+    transform: none;
+  }
 }
 
 .image-badge {
@@ -594,7 +712,7 @@ a {
 
 /* ---- STRENGTH ---- */
 
-/* 上から並べる */
+/* 1行が長くなりすぎないよう幅を抑える */
 .strength-list {
   max-width: 880px;
 }
@@ -790,6 +908,16 @@ textarea {
   border-color: var(--color-error);
 }
 
+/* © の横の「Source code」 */
+.source-link {
+  margin-left: 1.5em;
+  transition: color .3s;
+}
+
+.source-link:hover {
+  color: var(--color-accent-text);
+}
+
 .submit-button {
   padding: 12px;
   border: 1px solid var(--color-accent);
@@ -815,7 +943,7 @@ textarea {
   text-align: center;
 }
 
-.modal-thanks h3 {
+.modal-thanks h2 {
   justify-content: center;
 }
 
@@ -831,18 +959,31 @@ textarea {
 
 /* ---- modal ---- */
 
+/* <dialog>。ブラウザ標準の枠・余白・大きさの制限を外し、画面全体を覆う暗い背景として使う */
 #modal {
   position: fixed;
   inset: 0;
   z-index: 20;
   display: grid;
   place-items: center;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
   padding: 4vh 4vw;
+  border: 0;
   background: rgba(26, 32, 44, .45);
+  color: var(--color-text);
 }
 
-#modal[hidden] {
+#modal:not([open]) {
   display: none;
+}
+
+/* 暗い背景は #modal 自身が描くので、標準の背景は透明に */
+#modal::backdrop {
+  background: transparent;
 }
 
 .modal-box {
@@ -906,8 +1047,16 @@ textarea {
 .thumbnails button {
   width: 56px;
   aspect-ratio: 4 / 3;
-  background: var(--color-placeholder) center / cover;
+  overflow: hidden;
+  background: var(--color-placeholder);
   opacity: .5;
+}
+
+.thumbnails img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .thumbnails .is-active {
@@ -920,7 +1069,8 @@ textarea {
   height: 24px;
 }
 
-.modal-box h3 {
+/* ポップアップのタイトル（h2）と小見出し（h3） */
+.modal-box h2 {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -929,7 +1079,7 @@ textarea {
   letter-spacing: .02em;
 }
 
-.modal-box h4 {
+.modal-box h3 {
   margin: 22px 0 4px;
   font-size: 14px;
   color: var(--color-subtext);
@@ -1005,6 +1155,11 @@ textarea {
   .works-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  /* 本文の右端がナビのラベルに届くので隠す */
+  .nav-label {
+    display: none;
+  }
 }
 
 @media (max-width: 700px) {
@@ -1023,7 +1178,7 @@ textarea {
   }
 
   :root {
-    --pad-top: 12vh;
+    --pad-top: max(12vh, calc(var(--label-bottom) + var(--label-gap)));
     --pad-right: 11vw;
     --pad-bottom: 10vh;
     --pad-left: 6vw;
@@ -1032,10 +1187,6 @@ textarea {
   .works-grid,
   .skill-list {
     grid-template-columns: 1fr;
-  }
-
-  .nav-label {
-    display: none;
   }
 
   .scroll-hint {
@@ -1062,15 +1213,38 @@ textarea {
     margin-left: 0;
   }
 
-  .hero-text {
-    left: var(--pad-left);
+  .section-top {
+    --hero-text-left: var(--pad-left);
   }
 
   .hero-catch {
-    font-size: 6vw;
+    font-size: clamp(18px, 6vw, 24px);
   }
 
   .hero-lead {
-    font-size: 3.7vw;
+    font-size: clamp(13px, 3.7vw, 16px);
+  }
+}
+
+/* 高さの低い画面（横向きのスマホなど） */
+@media (max-height: 500px) {
+  :root {
+    --label-top: max(16px, env(safe-area-inset-top));
+    --label-size: 22px;
+    --label-gap: 16px;
+    --pad-top: calc(var(--label-bottom) + var(--label-gap));
+    --pad-bottom: 32px;
+  }
+
+  #nav {
+    --nav-item-h: 28px;
+  }
+
+  .scroll-hint {
+    display: none;
+  }
+
+  .hero-text {
+    padding-top: 16px;
   }
 }

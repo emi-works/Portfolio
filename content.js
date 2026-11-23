@@ -31,7 +31,7 @@
     details: [problem, solutions, points],
   });
 
-  // 個人制作用（詳細の項目名が「きっかけ / できること / こだわり」）
+  // 個人制作用。詳細は trigger / features / point の順（項目名はグループの detailLabels で付ける）
   const appWork = ({ title, tech = '', summary = '', trigger = '', features = '', point = '', images, url = '' }) => ({
     ...work(tech, { title, name: title, summary, url, ...(images && { images }) }),
     details: [trigger, features, point],
@@ -44,7 +44,7 @@
     lead: '業務効率化（kintone・Excel VBA・Power Automate）とWeb制作を中心に、アプリ制作や動画編集まで、ITの力であなたのアイデアを具現化します。',
 
     // PROFILE
-    // 1要素 = 1行
+    // 1要素 = 1段落
     profile: [
       '顧客管理システムを販売するIT会社で、インターン期間も含め約5年間エンジニアとして働いてきました。',
       '前任者のいない環境で技術担当を一人で務め、業務の自動化（kintoneのカスタマイズ（20アプリ以上）やExcel VBAツール（20本以上））、サポートサイトの制作まで、エンジニアではない方でも日々の業務で使い続けられる仕組みをつくってきました。',
@@ -377,6 +377,7 @@
         message: '内容を確認のうえ、ご入力いただいたメールアドレス宛にご連絡いたします。',
       },
     },
+    sourceUrl: 'https://github.com/emi-works/Portfolio', // © の横の「Source code」のリンク先
     privacy: [
       'ご入力いただいた個人情報は、お問い合わせへの対応およびご連絡の目的にのみ利用いたします。',
       '法令に基づく場合を除き、第三者に開示・提供することはありません。',
